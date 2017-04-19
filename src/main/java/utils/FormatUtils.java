@@ -110,7 +110,7 @@ public class FormatUtils {
                 s.append((char) b);
             }
         }
-        
+
         return s.toString();
     }
     private static final DateFormat format = SimpleDateFormat.getInstance();
