@@ -13,7 +13,6 @@ import java.util.Iterator;
  */
 public class ByteUtils {
 
-
     public static byte[] intToBytes(final int integer, final int bLength) {
         if (integer > Integer.MAX_VALUE || integer < Integer.MIN_VALUE) {
             return null;
