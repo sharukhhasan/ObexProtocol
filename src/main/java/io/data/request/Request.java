@@ -16,23 +16,23 @@ public abstract class Request extends Packet {
     public static final byte SESSION = (byte) 0x87;
     public static final byte ABORT = (byte) 0xFF;
     public static final byte FINAL = (byte) 0x80;
-    
-    protected byte opcode;
+
+    protected byte opCode;
 
     public void setType(final byte type) {
-        opcode = type;
+        opCode = type;
     }
 
     public byte getType() {
-        return opcode;
+        return opCode;
     }
 
     public void setFinal() {
-        opcode |= FINAL;
+        opCode |= FINAL;
     }
 
     public boolean isFinal() {
-        return ((opcode & FINAL) == FINAL);
+        return ((opCode & FINAL) == FINAL);
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class Request extends Packet {
 
             Request req = (Request) obj;
 
-            return opcode == req.getType();
+            return opCode == req.getType();
         }
         return false;
     }
@@ -57,7 +57,7 @@ public abstract class Request extends Packet {
     @Override
     public int hashCode() {
         int hash = super.hashCode();
-        hash = 43 * hash + this.opcode;
+        hash = 43 * hash + this.opCode;
         return hash;
     }
 }

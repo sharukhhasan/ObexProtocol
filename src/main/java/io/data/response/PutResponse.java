@@ -9,32 +9,33 @@ import java.util.Iterator;
 /**
  * Created by Sharukh Hasan on 4/19/17.
  */
-public class GetResponse extends Response {
-
+public class PutResponse extends Response {
     private static final int HEADER_OFFSET = 3;
 
-    public GetResponse(byte atype) {
+    public PutResponse(byte atype) {
         responseCode = atype;
         headerOffset = HEADER_OFFSET;
         packetLength = 3;
     }
 
-    public GetResponse(byte[] data) {
+    public PutResponse(byte[] data) {
         rawData = data;
         headerOffset = HEADER_OFFSET;
         parseRawData(data);
     }
 
-    public GetResponse(byte atype, HeaderSet inHeaders) {
+    public PutResponse(byte atype, HeaderSet inHeaders) {
         responseCode = atype;
         headerOffset = HEADER_OFFSET;
         packetLength = 3;
 
         if (inHeaders == null)
             return;
+
         Iterator iter = inHeaders.iterator();
         if (iter == null)
             return;
+
         while (iter.hasNext()) {
             Header header = (Header)iter.next();
             if (header != null) {
@@ -48,6 +49,7 @@ public class GetResponse extends Response {
         if (rawData == null) {
             return;
         }
+
         rawData[0] = responseCode;
         byte[] tmpBytes = ByteUtils.intToBytes(packetLength, 2);
         ByteUtils.setBytes(rawData, tmpBytes, 1, 2);
@@ -58,8 +60,8 @@ public class GetResponse extends Response {
     }
 
     protected String packetFieldsToString() {
-        String result = "GetResponse:\n";
-        result += "responseCode: " + ByteUtils.byteToHexString(responseCode) + "\n";
+        String result = "PutResponse:\n";
+        result += "respcode: " + ByteUtils.byteToHexString(responseCode) + "\n";
         result += "Packet Length: " + packetLength + "\n";
         return result;
     }

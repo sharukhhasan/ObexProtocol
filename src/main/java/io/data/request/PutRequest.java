@@ -1,4 +1,4 @@
-package io.data.response;
+package io.data.request;
 
 import io.data.Header;
 import io.data.HeaderSet;
@@ -9,34 +9,35 @@ import java.util.Iterator;
 /**
  * Created by Sharukh Hasan on 4/19/17.
  */
-public class GetResponse extends Response {
+public class PutRequest extends Request {
 
-    private static final int HEADER_OFFSET = 3;
+    private static final int HEADEROFFSET = 3;
 
-    public GetResponse(byte atype) {
-        responseCode = atype;
-        headerOffset = HEADER_OFFSET;
+    public PutRequest() {
+        opCode = Request.PUT;
+        headerOffset = HEADEROFFSET;
         packetLength = 3;
     }
 
-    public GetResponse(byte[] data) {
+    public PutRequest(byte[] data) {
+        opCode = Request.PUT;
+        headerOffset = HEADEROFFSET;
         rawData = data;
-        headerOffset = HEADER_OFFSET;
         parseRawData(data);
     }
 
-    public GetResponse(byte atype, HeaderSet inHeaders) {
-        responseCode = atype;
-        headerOffset = HEADER_OFFSET;
+    public PutRequest(HeaderSet inHeaders) {
+        opCode = Request.PUT;
+        headerOffset = HEADEROFFSET;
         packetLength = 3;
 
-        if (inHeaders == null)
+        if (inHeaders == null) {
             return;
+        }
+
         Iterator iter = inHeaders.iterator();
-        if (iter == null)
-            return;
-        while (iter.hasNext()) {
-            Header header = (Header)iter.next();
+        while (iter != null && iter.hasNext()) {
+            Header header = (Header) iter.next();
             if (header != null) {
                 headers.add(header);
                 packetLength += header.getLength();
@@ -48,18 +49,19 @@ public class GetResponse extends Response {
         if (rawData == null) {
             return;
         }
-        rawData[0] = responseCode;
+
+        rawData[0] = opCode;
         byte[] tmpBytes = ByteUtils.intToBytes(packetLength, 2);
         ByteUtils.setBytes(rawData, tmpBytes, 1, 2);
     }
 
     protected void parsePacketFields(byte[] data) {
-        responseCode = data[0];
+        opCode = data[0];
     }
 
     protected String packetFieldsToString() {
-        String result = "GetResponse:\n";
-        result += "responseCode: " + ByteUtils.byteToHexString(responseCode) + "\n";
+        String result = "PutRequest:\n";
+        result += "opcode: " + ByteUtils.byteToHexString(opCode) + "\n";
         result += "Packet Length: " + packetLength + "\n";
         return result;
     }
