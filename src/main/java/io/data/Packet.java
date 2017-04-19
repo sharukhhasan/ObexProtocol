@@ -12,29 +12,29 @@ public abstract class Packet {
 
     public static final int MAXPACKETLENGTH = 64 * 1024 - 1;
 
-    protected int PacketLength = 0;
+    protected int packetLength = 0;
     protected HeaderSet<Header> headers = new HeaderSet<Header>();
-    protected byte[] rawdata = null;
+    protected byte[] rawData = null;
 
     // Offset of the optional headers if there is any
-    protected int headeroffset;
+    protected int headerOffset;
 
     public void setPacketLength(final int length) {
-        PacketLength = length;
-        if (rawdata != null) {
-            byte[] pl = ByteUtils.intToBytes(PacketLength, 2);
-            rawdata[1] = pl[0];
-            rawdata[2] = pl[1];
+        packetLength = length;
+        if (rawData != null) {
+            byte[] pl = ByteUtils.intToBytes(packetLength, 2);
+            rawData[1] = pl[0];
+            rawData[2] = pl[1];
         }
     }
 
     public int getPacketLength() {
-        return PacketLength;
+        return packetLength;
     }
 
     public void addHeader(final Header header) {
         headers.add(header);
-        PacketLength += header.getLength();
+        packetLength += header.getLength();
     }
 
     public void removeHeaders() {
@@ -52,7 +52,7 @@ public abstract class Packet {
 
     public void removeHeader(final Header header) {
         headers.remove(header);
-        PacketLength -= header.getLength();
+        packetLength -= header.getLength();
     }
 
     public byte[] getHeaderValue(final byte headerType) {
@@ -64,13 +64,13 @@ public abstract class Packet {
     public abstract void setType(byte type);
 
     public byte[] toBytes() {
-        if (rawdata == null) {
-            rawdata = new byte[PacketLength];
+        if (rawData == null) {
+            rawData = new byte[packetLength];
 
             fillPacketFields();
         }
 
-        int index = headeroffset;
+        int index = headerOffset;
         byte[] tmpBytes;
         if (headers != null) {
             // Be sure ConnectionID header always be the first header
@@ -78,7 +78,7 @@ public abstract class Packet {
             if (connectionID != null) {
                 tmpBytes = connectionID.toBytes();
                 for (int i = 0; i < 5; i++) {
-                    rawdata[index++] = tmpBytes[i];
+                    rawData[index++] = tmpBytes[i];
                 }
             }
 
@@ -91,24 +91,24 @@ public abstract class Packet {
                 }
 
                 for (int i = 0; i < tmpBytes.length; i++) {
-                    rawdata[index++] = tmpBytes[i];
+                    rawData[index++] = tmpBytes[i];
                 }
             }
         }
-        return rawdata;
+        return rawData;
     }
 
     protected abstract void fillPacketFields();
 
     protected void parseRawData(final byte[] data) {
-        int offset = headeroffset;
+        int offset = headerOffset;
         byte[] tmpArray = null;
 
         // Get actual length instead of parsing from the raw data
-        PacketLength = data.length;
-        parsePacketFields(ByteUtils.getBytes(data, 0, headeroffset));
+        packetLength = data.length;
+        parsePacketFields(ByteUtils.getBytes(data, 0, headerOffset));
 
-        while (offset < PacketLength) {
+        while (offset < packetLength) {
             int headerLength = Header.getHeaderLength(data[offset]);
             if (headerLength == -1) {
                 tmpArray = ByteUtils.getBytes(data, offset + 1, 2);
@@ -163,7 +163,7 @@ public abstract class Packet {
         }
 
         Packet pkt = (Packet) obj;
-        if (PacketLength != pkt.getPacketLength()) {
+        if (packetLength != pkt.getPacketLength()) {
             return false;
         }
 
@@ -205,7 +205,7 @@ public abstract class Packet {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + Arrays.hashCode(this.rawdata);
+        hash = 43 * hash + Arrays.hashCode(this.rawData);
         return hash;
     }
 
